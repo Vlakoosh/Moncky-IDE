@@ -14,6 +14,7 @@ public class Main extends Application {
         Model model = new Model();
         View view = new View();
         primaryStage.setScene(new Scene(view));
+        primaryStage.setTitle("IDE");
         new Presenter(model, view);
         primaryStage.show();
     }

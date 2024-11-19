@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Appname.iml" filepath="$PROJECT_DIR$/Appname.iml" />
+      <module fileurl="file://$PROJECT_DIR$/moncky-IDE.iml" filepath="$PROJECT_DIR$/moncky-IDE.iml" />
     </modules>
   </component>
 </project>
