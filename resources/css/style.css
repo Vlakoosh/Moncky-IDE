@@ -1,6 +1,12 @@
 .tree-view {
     -fx-background-color: #2e2e2e;
     -fx-text-fill: #dcdcdc;
+    -fx-border-color: -fx-my-menu-color-highlighted;
+    -fx-border-width: 2px;
+}
+.tree-view .label {
+    -fx-background-color: #2e2e2e;
+    -fx-text-fill: #dcdcdc;
 }
 
 .tree-cell {
@@ -23,7 +29,7 @@
 
 
 
-/* VARIABLE DEFINITIONS: Only these 4 variables have to be adjusted, the rest is copy-paste */
+/* VARIABLE DEFINITIONS: */
 * {
     -fx-my-menu-color: #2e2e2e;                  /* Change according to your needs */
     -fx-my-menu-color-highlighted: #505050;      /* Change according to your needs */
@@ -107,6 +113,20 @@
     -fx-font-family: "Consolas", monospace;
     -fx-font-size: 12px;
     -fx-text-fill: -fx-my-menu-font-color; /* Default text color */
+    -fx-border-color: -fx-my-menu-color-highlighted;
+    -fx-border-style: solid solid solid none;
+    -fx-border-width: 2px;
+    -fx-border-width-right: 0px;
+}
+
+.virtualized-scroll-pane {
+    -fx-border-color: -fx-my-menu-color-highlighted;
+    -fx-border-width: 2px;
+}
+
+.virtualized-scroll-pane > .scroll-bar:vertical {
+    -fx-background-color: -fx-my-menu-color;
+    -fx-text-fill: -fx-my-menu-color;
 }
 
 .lineno {

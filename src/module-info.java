@@ -6,4 +6,5 @@ open module Appname {
     requires org.fxmisc.richtext;
     requires javafx.fxml;
     requires reactfx;
+    requires org.fxmisc.flowless;
 }

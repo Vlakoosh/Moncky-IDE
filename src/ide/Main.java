@@ -12,7 +12,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Model model = new Model();
-        View view = new View();
+        View view = new View(primaryStage);
         primaryStage.setScene(new Scene(view));
         primaryStage.setTitle("IDE");
         primaryStage.setWidth(1280);
