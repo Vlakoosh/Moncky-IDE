@@ -98,3 +98,70 @@
     -fx-background-color: -fx-my-menu-color;
 }
 
+
+/* General background and text styles */
+.code-area {
+    -fx-background-color: -fx-my-menu-color;
+    -fx-highlight-fill: -fx-my-menu-color-highlighted;
+    -fx-highlight-text-fill: -fx-my-menu-font-color-highlighted;
+    -fx-font-family: "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-my-menu-font-color; /* Default text color */
+}
+
+.lineno {
+    -fx-alignment: center-left;
+    -fx-font-size: 12px;
+    -fx-font-family: Consolas, monospace;
+    -fx-padding: 0 10 0 10; /* Add padding */
+
+    -fx-background-color: -fx-my-menu-color;
+    -fx-text-fill: -fx-my-menu-font-color;
+}
+
+.styled-text-area .text {
+    -fx-fill: -fx-my-menu-font-color;
+}
+
+
+
+/* Syntax Highlighting */
+
+.default {
+    -fx-fill: #dcdcdc !important; /* Default light gray text */
+}
+
+.keyword {
+    -fx-fill: #00bbff !important;
+    -fx-font-weight: bold;
+}
+.alu {
+    -fx-fill: #73dbff !important;
+    -fx-font-weight: bold;
+}
+
+.register {
+    -fx-fill: #d299fa !important;
+}
+
+.label {
+    -fx-fill: #33cc33 !important;
+    -fx-font-style: italic;
+}
+
+.comment {
+    -fx-fill: #999999 !important;
+    -fx-font-style: italic;
+}
+
+
+.error {
+    -fx-underline: true;
+    -fx-fill: red;
+}
+
+
+
+
+
+

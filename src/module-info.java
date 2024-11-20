@@ -3,4 +3,7 @@ open module Appname {
     requires javafx.media;
     requires javafx.graphics;
     requires javafx.base;
+    requires org.fxmisc.richtext;
+    requires javafx.fxml;
+    requires reactfx;
 }
