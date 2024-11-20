@@ -24,7 +24,7 @@ public class View extends BorderPane
         /* layout type */ {
     // private Node attributes (controls)
     private MenuBar menuBar;
-    private TreeView<String> fileTree;
+    private TreeView<FileNode> fileTree;
     private CodeArea codeArea;
     private VirtualizedScrollPane<CodeArea> codeAreaContainer;
     private double fontSize = 12;
@@ -92,10 +92,10 @@ public class View extends BorderPane
         fileTree.setOnMouseDragged(event -> handleMouseDragged(event, fileTree));
 
         fileTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && newValue.getGraphic() instanceof Label) {
-                File file = new File(((Label) newValue.getGraphic()).getText());
+            if (newValue != null) {
+                File file = new File(newValue.getValue().getFilePath());
                 if (file.isFile()) {
-                    loadFolderIntoTreeView(file);
+                    loadFileContentIntoEditor(file);
                 }
             }
         });
@@ -218,14 +218,14 @@ public class View extends BorderPane
 
     private double startX;
 
-    private void handleMousePressed(MouseEvent event, TreeView<String> treeView) {
+    private void handleMousePressed(MouseEvent event, TreeView<FileNode> treeView) {
         // When mouse is pressed on the right edge of the TreeView, start resizing
         if (event.getX() > treeView.getWidth() - 10) { // 10px tolerance from the edge
             startX = event.getScreenX();
         }
     }
 
-    private void handleMouseDragged(MouseEvent event, TreeView<String> treeView) {
+    private void handleMouseDragged(MouseEvent event, TreeView<FileNode> treeView) {
         if (startX != 0) {
             double deltaX = event.getScreenX() - startX;
             double newWidth = treeView.getWidth() + deltaX;
@@ -254,13 +254,13 @@ public class View extends BorderPane
     }
 
     private void loadFolderIntoTreeView(File folder) {
-        TreeItem<String> rootItem = new TreeItem<>(folder.getName());
+        TreeItem<FileNode> rootItem = new TreeItem<>(new FileNode(folder.getName(), folder.getAbsolutePath()));
         rootItem.setExpanded(true);
         addChildrenToTreeItem(rootItem, folder);
         fileTree.setRoot(rootItem);
     }
 
-    private void addChildrenToTreeItem(TreeItem<String> parent, File folder) {
+    private void addChildrenToTreeItem(TreeItem<FileNode> parent, File folder) {
 
         File[] files = folder.listFiles();
 
@@ -270,7 +270,7 @@ public class View extends BorderPane
                 icon.setFitHeight(16);
                 icon.setFitWidth(16);
 
-                TreeItem<String> child = new TreeItem<>(file.getName(), icon);
+                TreeItem<FileNode> child = new TreeItem<>(new FileNode(file.getName(), file.getAbsolutePath()), icon);
                 parent.getChildren().add(child);
                 if (file.isDirectory()) {
                     addChildrenToTreeItem(child, file); // Recursive call for directories

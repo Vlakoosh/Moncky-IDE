@@ -5,7 +5,7 @@
     -fx-border-width: 2px;
 }
 .tree-view .label {
-    -fx-background-color: #2e2e2e;
+    -fx-background-color: transparent;
     -fx-text-fill: #dcdcdc;
 }
 
