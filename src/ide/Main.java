@@ -15,6 +15,9 @@ public class Main extends Application {
         View view = new View();
         primaryStage.setScene(new Scene(view));
         primaryStage.setTitle("IDE");
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(720);
+        primaryStage.setResizable(true);
         new Presenter(model, view);
         primaryStage.show();
     }
