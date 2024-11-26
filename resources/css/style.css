@@ -5,6 +5,7 @@
     -fx-my-menu-font-color: #FFFFFF;             /* Change according to your needs */
     -fx-my-menu-font-color-highlighted: #FFFFFF; /* Change according to your needs */
 
+    -fx-font-size: 14;
     -fx-background-color: -fx-my-menu-color;
 }
 
@@ -33,11 +34,17 @@
 .tree-cell:expanded > .tree-disclosure-node > .arrow {
     -fx-background-color: #ffffff;
 }
+.tree-cell:expanded > .tree-disclosure-node {
+    -fx-background-color: transparent;
+}
 
 .tree-cell > .tree-disclosure-node > .arrow {
     -fx-background-color: #ffffff;
 }
 
+.tree-cell > .tree-disclosure-node {
+    -fx-background-color: transparent;
+}
 
 
 
@@ -56,12 +63,14 @@
 /*** Top-level menu's label (not selected / hovered) ***/
 .menu-bar > .container > .menu-button > .label {
     -fx-text-fill: -fx-my-menu-font-color;
+    -fx-background-color: transparent;
 }
 
 /*** Top-level menu's label (disabled) ***/
 .menu-bar > .container > .menu-button > .label:disabled {
     -fx-opacity: 1.0;
 }
+
 
 /*** Top-level menu itself (selected / hovered) ***/
 .menu-bar > .container > .menu-button:hover,
@@ -75,6 +84,7 @@
 .menu-bar > .container > .menu-button:focused > .label,
 .menu-bar > .container > .menu-button:showing > .label {
     -fx-text-fill: -fx-my-menu-font-color-highlighted;
+    fx-background-color: transparent;
 }
 
 /* MENU ITEM (children of a MENU BUTTON) */
@@ -100,6 +110,8 @@
 
 /*** The item's label (hovered / focused) ***/
 .menu-item:focused .label, .menu-item:hover .label {
+    -fx-fill: -fx-my-menu-color-highlighted;
+    -fx-background-color: -fx-my-menu-color-highlighted;
     -fx-text-fill: -fx-my-menu-font-color-highlighted;
 }
 
@@ -142,7 +154,7 @@
     -fx-highlight-text-fill: -fx-my-menu-font-color-highlighted;
     -fx-font-family: "Consolas", monospace;
     -fx-font-size: 12px;
-    -fx-text-fill: #616161;
+    -fx-text-fill: #8e8e8e;
 }
 
 .text-field {

@@ -11,8 +11,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
@@ -23,31 +21,62 @@ import java.util.Objects;
 
 public class View extends BorderPane {
     // private Node attributes (controls)
+
+    // parent stage/window
+    private final Stage primaryStage;
+
+    // main menu bar
     private MenuBar menuBar;
+
+    // menus
+    private Menu menuFile;
+    private Menu menuView;
+    private Menu menuEdit;
+    private Menu menuRun;
+
+    // menu items
+    private MenuItem menuItemFileNew;
+    private MenuItem menuItemFileNewFolder;
+    private MenuItem menuItemFileSave;
+    private MenuItem menuItemFileSaveAs;
+    private MenuItem menuItemFileOpenFolder;
+
+    private MenuItem menuViewFontSizeIncrease;
+    private MenuItem menuViewFontSizeDecrease;
+
+    private MenuItem menuItemEditUndo;
+
+    private MenuItem menuItemRunCompile;
+    private MenuItem menuItemRunInterpreter;
+
+    // file tree
     private TreeView<FileNode> fileTree;
+    // code editor
     private CodeArea codeArea;
     private VirtualizedScrollPane<CodeArea> codeAreaContainer;
-    private double fontSize = 12;
-    private Stage primaryStage;
-    private boolean savedChanges = true;
+
+    // terminal
     private TextArea terminalHistory;
     private TextField terminalConsole;
     private BorderPane terminalContainer;
 
-    private File currentFile;
+    // values:
 
+    private boolean savedChanges = true;
+    private File currentFile;
     private SyntaxHighlighting syntaxHighlighting;
 
-    //url, width, height, preserveRatio, smooth
-    private final Image imageFolder = new Image("/images/icon-folder.png", 30, 30, true, true);
-    private final Image imageFile = new Image("/images/icon-file-document.png", 30, 30, true, true);
-    private final Image imageArchive = new Image("/images/icon-archive.png", 30, 30, true, true);
-    private final Image imageBinary = new Image("/images/icon-file-binary.png", 30, 30, true, true);
-    private final Image imageHex = new Image("/images/icon-file-hex.png", 30, 30, true, true);
-    private final Image imageCode = new Image("/images/icon-code.png", 30, 30, true, true);
-    private final Image imageCss = new Image("/images/icon-file-css.png", 30, 30, true, true);
-    private final Image imageJava = new Image("/images/icon-code-java.png", 30, 30, true, true);
-    private final Image imageFolderBurn = new Image("/images/icon-folder-burn.png", 30, 30, true, true);
+    // images
+    // url, width, height, preserveRatio, smooth
+    private final Image imageFolder = new Image("/images/icon-folder.png", 45, 45, true, true);
+    private final Image imageFile = new Image("/images/icon-file-document.png", 45, 45, true, true);
+    private final Image imageArchive = new Image("/images/icon-archive.png", 45, 45, true, true);
+    private final Image imageBinary = new Image("/images/icon-file-binary.png", 45, 45, true, true);
+    private final Image imageHex = new Image("/images/icon-file-hex.png", 45, 45, true, true);
+    private final Image imageCode = new Image("/images/icon-code.png", 45, 45, true, true);
+    private final Image imageCss = new Image("/images/icon-file-css.png", 45, 45, true, true);
+    private final Image imageJava = new Image("/images/icon-code-java.png", 45, 45, true, true);
+    private final Image imageFolderBurn = new Image("/images/icon-folder-burn.png", 45, 45, true, true);
 
     public View(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -62,24 +91,37 @@ public class View extends BorderPane {
         // label = new Label("...")
 
         //create menus
-        Menu menuFile = new Menu("File");
-        Menu menuEdit = new Menu("Edit");
-        Menu menuRun = new Menu("Run");
+        menuFile = new Menu("File");
+        menuView = new Menu("View");
+        menuEdit = new Menu("Edit");
+        menuRun = new Menu("Run");
 
-        // create menuitems
-        MenuItem menuItemFileSave = new MenuItem("Save");
-        MenuItem menuItemFileSaveAs = new MenuItem("Save As");
-        MenuItem menuItemFileOpenFolder = new MenuItem("Open Folder");
+        // create menu items
+        // file menu
+        menuItemFileNew = new MenuItem("New File");
+        menuItemFileNewFolder = new MenuItem("New Project");
+        menuItemFileSave = new MenuItem("Save");
+        menuItemFileSaveAs = new MenuItem("Save As");
+        menuItemFileOpenFolder = new MenuItem("Open Folder");
 
-        MenuItem menuItemEditUndo = new MenuItem("Undo");
+        // view menu
+        menuViewFontSizeIncrease = new MenuItem("Increase Font Size");
+        menuViewFontSizeDecrease = new MenuItem("Decrease Font Size");
 
-        MenuItem menuItemRunCompile = new MenuItem("Compile");
-        MenuItem menuItemRunInterpreter = new MenuItem("Interpreter");
+        // edit menu
+        menuItemEditUndo = new MenuItem("Undo");
+
+        // run menu
+        menuItemRunCompile = new MenuItem("Compile");
+        menuItemRunInterpreter = new MenuItem("Interpreter");
 
         // add menu items to menu
         menuFile.getItems().add(menuItemFileSave);
         menuFile.getItems().add(menuItemFileSaveAs);
         menuFile.getItems().add(menuItemFileOpenFolder);
+
+        menuView.getItems().add(menuViewFontSizeIncrease);
+        menuView.getItems().add(menuViewFontSizeDecrease);
 
         menuEdit.getItems().add(menuItemEditUndo);
 
@@ -91,10 +133,12 @@ public class View extends BorderPane {
 
         // add menu to menubar
         menuBar.getMenus().add(menuFile);
+        menuBar.getMenus().add(menuView);
         menuBar.getMenus().add(menuEdit);
         menuBar.getMenus().add(menuRun);
 
         terminalHistory = new TextArea("Welcome to moncky IDE : version 0.1.0");
+        terminalHistory.setEditable(false);
         terminalConsole = new TextField();
         terminalContainer = new BorderPane();
 
@@ -126,28 +170,13 @@ public class View extends BorderPane {
         codeAreaContainer = new VirtualizedScrollPane<>(codeArea);
 
         // Create keyboard shortcuts
-        KeyCombination increaseFont = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.CONTROL_DOWN);
-        KeyCombination decreaseFont = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN);
-        KeyCombination saveFile = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+//        KeyCombination increaseFont = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.CONTROL_DOWN);
+//        KeyCombination decreaseFont = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN);
+//
+//        KeyCombination saveFile = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
 
-        menuItemFileOpenFolder.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
-        menuItemFileOpenFolder.setOnAction(e -> openFolder(primaryStage));
-        menuItemFileSaveAs.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+S"));
-        menuItemFileSaveAs.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            saveEditorContentAsFile(fileChooser.showSaveDialog(primaryStage));
-        });
 
-        // Add key listener
-        setOnKeyPressed(event -> {
-            if (increaseFont.match(event)) {
-                adjustFontSize(codeArea, 1); // Increase font size by 1
-            } else if (decreaseFont.match(event)) {
-                adjustFontSize(codeArea, -1); // Decrease font size by 1
-            } else if (saveFile.match(event)) {
-                saveEditorContentIntoFile();
-            }
-        });
+
 
     }
 
@@ -199,14 +228,9 @@ public class View extends BorderPane {
         }
     }
 
-    private void adjustFontSize(CodeArea codeArea, int delta) {
-        fontSize = Math.max(10, fontSize + delta); // Minimum font size is 10
-        codeArea.setStyle(String.format("-fx-font-size: %.1fpx !important;", fontSize));
 
 
-    }
-
-    private void openFolder(Stage primaryStage) {
+    public void openFolder(Stage primaryStage) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Open Folder as Project");
         File selectedDirectory = directoryChooser.showDialog(primaryStage);
@@ -215,11 +239,12 @@ public class View extends BorderPane {
         }
     }
 
-    private void loadFolderIntoTreeView(File folder) {
+    public void loadFolderIntoTreeView(File folder) {
         TreeItem<FileNode> rootItem = new TreeItem<>(new FileNode(folder.getName(), folder.getAbsolutePath()));
         rootItem.setExpanded(true);
         addChildrenToTreeItem(rootItem, folder);
         fileTree.setRoot(rootItem);
+        terminalHistory.setText(terminalHistory.getText() + "\nOpened folder: " + folder.getName() + " from directory: " + folder.getAbsolutePath());
     }
 
     private void addChildrenToTreeItem(TreeItem<FileNode> parent, File folder) {
@@ -259,6 +284,7 @@ public class View extends BorderPane {
             currentFile = file;
             String content = Files.readString(file.toPath());
             codeArea.replaceText(content);
+            terminalHistory.setText(terminalHistory.getText() + "\nLoaded file: " + file.getName() + " in directory: " + file.getPath());
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to load file: " + file.getName());
@@ -266,7 +292,7 @@ public class View extends BorderPane {
         }
     }
 
-    private void saveEditorContentIntoFile(){
+    public void saveEditorContentIntoFile(){
         if (currentFile == null){
             FileChooser fileChooser = new FileChooser();
             File selectedFile = fileChooser.showSaveDialog(primaryStage);
@@ -274,6 +300,7 @@ public class View extends BorderPane {
         }
         try{
             Files.writeString(currentFile.toPath(), codeArea.getText());
+            terminalHistory.setText(terminalHistory.getText() + "\nSaved file: " + currentFile.getName() + " in directory: " + currentFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save file: " + currentFile.getName());
@@ -281,7 +308,7 @@ public class View extends BorderPane {
         }
     }
 
-    private void saveEditorContentAsFile(File selectedFile) {
+    public void saveEditorContentAsFile(File selectedFile) {
         if (selectedFile == null){
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save file: " + "No file selected");
             alert.showAndWait();
@@ -289,6 +316,7 @@ public class View extends BorderPane {
         }
         try{
             Files.writeString(selectedFile.toPath(), codeArea.getText());
+            terminalHistory.setText(terminalHistory.getText() + "\nSaved file: " + selectedFile.getName() + " in directory: " + selectedFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save file: " + selectedFile.getName());
@@ -296,4 +324,92 @@ public class View extends BorderPane {
         }
     }
 
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public MenuBar getMenuBar() {
+        return menuBar;
+    }
+
+    public Menu getMenuFile() {
+        return menuFile;
+    }
+
+    public Menu getMenuView() {
+        return menuView;
+    }
+
+    public Menu getMenuEdit() {
+        return menuEdit;
+    }
+
+    public Menu getMenuRun() {
+        return menuRun;
+    }
+
+    public MenuItem getMenuItemFileNew() {
+        return menuItemFileNew;
+    }
+
+    public MenuItem getMenuItemFileNewFolder() {
+        return menuItemFileNewFolder;
+    }
+
+    public MenuItem getMenuItemFileSave() {
+        return menuItemFileSave;
+    }
+
+    public MenuItem getMenuItemFileSaveAs() {
+        return menuItemFileSaveAs;
+    }
+
+    public MenuItem getMenuItemFileOpenFolder() {
+        return menuItemFileOpenFolder;
+    }
+
+    public MenuItem getMenuViewFontSizeIncrease() {
+        return menuViewFontSizeIncrease;
+    }
+
+    public MenuItem getMenuViewFontSizeDecrease() {
+        return menuViewFontSizeDecrease;
+    }
+
+    public MenuItem getMenuItemEditUndo() {
+        return menuItemEditUndo;
+    }
+
+    public MenuItem getMenuItemRunCompile() {
+        return menuItemRunCompile;
+    }
+
+    public MenuItem getMenuItemRunInterpreter() {
+        return menuItemRunInterpreter;
+    }
+
+    public TreeView<FileNode> getFileTree() {
+        return fileTree;
+    }
+
+    public CodeArea getCodeArea() {
+        return codeArea;
+    }
+
+    public VirtualizedScrollPane<CodeArea> getCodeAreaContainer() {
+        return codeAreaContainer;
+    }
+
+    public TextArea getTerminalHistory() {
+        return terminalHistory;
+    }
+
+    public TextField getTerminalConsole() {
+        return terminalConsole;
+    }
+
+    public BorderPane getTerminalContainer() {
+        return terminalContainer;
+    }
 }
