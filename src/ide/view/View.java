@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -29,6 +30,9 @@ public class View extends BorderPane
     private VirtualizedScrollPane<CodeArea> codeAreaContainer;
     private double fontSize = 12;
     private Stage primaryStage;
+    private boolean savedChanges = true;
+
+    private File currentFile;
 
     private SyntaxHighlighting syntaxHighlighting;
 
@@ -57,9 +61,6 @@ public class View extends BorderPane
         MenuItem menuItemFileSave = new MenuItem("Save");
         MenuItem menuItemFileSaveAs = new MenuItem("Save As");
         MenuItem menuItemFileOpenFolder = new MenuItem("Open Folder");
-
-        menuItemFileOpenFolder.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
-        menuItemFileOpenFolder.setOnAction(e -> openFolder(primaryStage));
 
         MenuItem menuItemEditUndo = new MenuItem("Undo");
 
@@ -100,66 +101,29 @@ public class View extends BorderPane
             }
         });
 
+        menuItemFileSave.setOnAction(event -> {
+            saveEditorContentIntoFile();
+        });
+
 
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.replaceText(0, 0,
-                """
-                        ;save a
-                        li r0, 10
-                        li r1, 0x0A
-                        li r8, 8
-                        li r2, 1
-                        shl r1, r8
-                        add r1, r2
-                        st r1, (r0)
-                                        
-                                        
-                        ;save b
-                        li r0, 11
-                        li r1, 10
-                        st r1, (r0)
-                                        
-                        ;if statement code block
-                        li r10, :endif
-                        li r11, :else
-                        li r0, 10
-                        ld r1, (r0)
-                        li r0, 11
-                        ld r2, (r0)
-                        sub r1, r2
-                        jps r11
-                        li r0, 10
-                        ld r1, (r0)
-                        li r0, 11
-                        ld r2, (r0)
-                        sub r1, r2
-                        li r0, 10
-                        st r1, (r0)
-                        jp r10
-                                        
-                                        
-                                        
-                                        
-                                        
-                        :else
-                        ;else code block
-                        li r0, 10
-                        ld r1, (r0)
-                        li r0, 11
-                        ld r2, (r0)
-                        add r1, r2
-                        li r0, 10
-                        st r1, (r0)
-                                        
-                        :endif
-                        halt""");
+        codeArea.replaceText(0, 0, "");
 
         codeAreaContainer = new VirtualizedScrollPane<>(codeArea);
 
         // Create keyboard shortcuts
         KeyCombination increaseFont = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.CONTROL_DOWN);
         KeyCombination decreaseFont = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.CONTROL_DOWN);
+        KeyCombination saveFile = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN);
+
+        menuItemFileOpenFolder.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+        menuItemFileOpenFolder.setOnAction(e -> openFolder(primaryStage));
+        menuItemFileSaveAs.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+S"));
+        menuItemFileSaveAs.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            saveEditorContentAsFile(fileChooser.showSaveDialog(primaryStage));
+        });
 
         // Add key listener
         setOnKeyPressed(event -> {
@@ -167,6 +131,8 @@ public class View extends BorderPane
                 adjustFontSize(codeArea, 1); // Increase font size by 1
             } else if (decreaseFont.match(event)) {
                 adjustFontSize(codeArea, -1); // Decrease font size by 1
+            } else if (saveFile.match(event)) {
+                saveEditorContentIntoFile();
             }
         });
 
@@ -194,27 +160,6 @@ public class View extends BorderPane
 
     // package-private Getters
     // for controls used by Presenter
-
-//    private TreeView<String> createFileTreeView(String rootDir) {
-//        File rootFile = new File(rootDir);
-//        TreeItem<String> rootItem = createNode(rootFile);
-//        TreeView<String> treeView = new TreeView<>(rootItem);
-//        return treeView;
-//    }
-//
-//    private TreeItem<String> createNode(File file) {
-//        ImageView icon = new ImageView(file.isDirectory() ? imageFolder : imageFile);
-//        icon.setFitHeight(16);
-//        icon.setFitWidth(16);
-//
-//        TreeItem<String> treeItem = new TreeItem<>(file.getName(), icon);
-//        if (file.isDirectory()) {
-//            for (File child : Objects.requireNonNull(file.listFiles())) {
-//                treeItem.getChildren().add(createNode(child));
-//            }
-//        }
-//        return treeItem;
-//    }
 
     private double startX;
 
@@ -281,11 +226,42 @@ public class View extends BorderPane
 
     private void loadFileContentIntoEditor(File file) {
         try {
+            currentFile = file;
             String content = Files.readString(file.toPath());
             codeArea.replaceText(content);
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to load file: " + file.getName());
+            alert.showAndWait();
+        }
+    }
+
+    private void saveEditorContentIntoFile(){
+        if (currentFile == null){
+            FileChooser fileChooser = new FileChooser();
+            File selectedFile = fileChooser.showSaveDialog(primaryStage);
+            saveEditorContentAsFile(selectedFile);
+        }
+        try{
+            Files.writeString(currentFile.toPath(), codeArea.getText());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save file: " + currentFile.getName());
+            alert.showAndWait();
+        }
+    }
+
+    private void saveEditorContentAsFile(File selectedFile) {
+        if (selectedFile == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save file: " + "No file selected");
+            alert.showAndWait();
+            return;
+        }
+        try{
+            Files.writeString(selectedFile.toPath(), codeArea.getText());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save file: " + selectedFile.getName());
             alert.showAndWait();
         }
     }
