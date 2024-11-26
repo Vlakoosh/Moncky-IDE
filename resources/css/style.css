@@ -1,3 +1,14 @@
+/* VARIABLE DEFINITIONS: */
+* {
+    -fx-my-menu-color: #2e2e2e;                  /* Change according to your needs */
+    -fx-my-menu-color-highlighted: #505050;      /* Change according to your needs */
+    -fx-my-menu-font-color: #FFFFFF;             /* Change according to your needs */
+    -fx-my-menu-font-color-highlighted: #FFFFFF; /* Change according to your needs */
+
+    -fx-background-color: -fx-my-menu-color;
+}
+
+
 .tree-view {
     -fx-background-color: #2e2e2e;
     -fx-text-fill: #dcdcdc;
@@ -29,13 +40,7 @@
 
 
 
-/* VARIABLE DEFINITIONS: */
-* {
-    -fx-my-menu-color: #2e2e2e;                  /* Change according to your needs */
-    -fx-my-menu-color-highlighted: #505050;      /* Change according to your needs */
-    -fx-my-menu-font-color: #FFFFFF;             /* Change according to your needs */
-    -fx-my-menu-font-color-highlighted: #FFFFFF; /* Change according to your needs */
-}
+
 
 /* MENU BAR + Top-level MENU BUTTONS */
 /*** The menu bar itself ***/
@@ -112,12 +117,47 @@
     -fx-highlight-text-fill: -fx-my-menu-font-color-highlighted;
     -fx-font-family: "Consolas", monospace;
     -fx-font-size: 12px;
-    -fx-text-fill: -fx-my-menu-font-color; /* Default text color */
+    -fx-text-fill: -fx-my-menu-font-color;
     -fx-border-color: -fx-my-menu-color-highlighted;
     -fx-border-style: solid solid solid none;
     -fx-border-width: 2px;
     -fx-border-width-right: 0px;
 }
+
+.text-area .content {
+    -fx-background-color: -fx-my-menu-color;
+
+    -fx-border-style: none solid none solid;
+    -fx-border-color: -fx-my-menu-color-highlighted;
+}
+
+.text-area {
+    -fx-background-color: transparent;
+
+    -fx-border-style: none solid none solid;
+    -fx-border-color: -fx-my-menu-color-highlighted;
+    -fx-border-width: 2px;
+
+    -fx-highlight-fill: -fx-my-menu-color-highlighted;
+    -fx-highlight-text-fill: -fx-my-menu-font-color-highlighted;
+    -fx-font-family: "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #616161;
+}
+
+.text-field {
+    -fx-border-style: none solid solid solid;
+    -fx-border-color: -fx-my-menu-color-highlighted;
+    -fx-border-width: 2px;
+    -fx-background-color: -fx-my-menu-color;
+    -fx-highlight-fill: -fx-my-menu-color-highlighted;
+    -fx-highlight-text-fill: -fx-my-menu-font-color-highlighted;
+    -fx-font-family: "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-my-menu-font-color;
+}
+
+
 
 .virtualized-scroll-pane {
     -fx-border-color: -fx-my-menu-color-highlighted;

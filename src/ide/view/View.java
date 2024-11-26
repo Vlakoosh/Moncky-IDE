@@ -21,8 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Objects;
 
-public class View extends BorderPane
-        /* layout type */ {
+public class View extends BorderPane {
     // private Node attributes (controls)
     private MenuBar menuBar;
     private TreeView<FileNode> fileTree;
@@ -31,14 +30,24 @@ public class View extends BorderPane
     private double fontSize = 12;
     private Stage primaryStage;
     private boolean savedChanges = true;
+    private TextArea terminalHistory;
+    private TextField terminalConsole;
+    private BorderPane terminalContainer;
 
     private File currentFile;
 
     private SyntaxHighlighting syntaxHighlighting;
 
     //url, width, height, preserveRatio, smooth
-    private final Image imageFolder = new Image("/images/folder.png", 20, 20, true, true);
-    private final Image imageFile = new Image("/images/document.png", 20, 20, true, true);
+    private final Image imageFolder = new Image("/images/icon-folder.png", 20, 20, true, true);
+    private final Image imageFile = new Image("/images/icon-file-document.png", 20, 20, true, true);
+    private final Image imageArchive = new Image("/images/icon-archive.png", 20, 20, true, true);
+    private final Image imageBinary = new Image("/images/icon-file-binary.png", 20, 20, true, true);
+    private final Image imageHex = new Image("/images/icon-file-hex.png", 20, 20, true, true);
+    private final Image imageCode = new Image("/images/icon-code.png", 20, 20, true, true);
+    private final Image imageCss = new Image("/images/icon-file-css.png", 20, 20, true, true);
+    private final Image imageJava = new Image("/images/icon-code-java.png", 20, 20, true, true);
+    private final Image imageFolderBurn = new Image("/images/document.png", 20, 20, true, true);
 
     public View(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -84,6 +93,10 @@ public class View extends BorderPane
         menuBar.getMenus().add(menuFile);
         menuBar.getMenus().add(menuEdit);
         menuBar.getMenus().add(menuRun);
+
+        terminalHistory = new TextArea("Welcome to moncky IDE : version 0.1.0");
+        terminalConsole = new TextField();
+        terminalContainer = new BorderPane();
 
         fileTree = new TreeView<>();
         loadFolderIntoTreeView(new File("src")); // Starting directory
@@ -144,6 +157,10 @@ public class View extends BorderPane
         setTop(menuBar);
         setLeft(fileTree);
         setCenter(codeAreaContainer);
+
+        terminalContainer.setTop(terminalHistory);
+        terminalContainer.setBottom(terminalConsole);
+        setBottom(terminalContainer);
     }
 
     private void styleNodes() {
