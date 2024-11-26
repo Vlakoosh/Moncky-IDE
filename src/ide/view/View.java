@@ -39,15 +39,15 @@ public class View extends BorderPane {
     private SyntaxHighlighting syntaxHighlighting;
 
     //url, width, height, preserveRatio, smooth
-    private final Image imageFolder = new Image("/images/icon-folder.png", 20, 20, true, true);
-    private final Image imageFile = new Image("/images/icon-file-document.png", 20, 20, true, true);
-    private final Image imageArchive = new Image("/images/icon-archive.png", 20, 20, true, true);
-    private final Image imageBinary = new Image("/images/icon-file-binary.png", 20, 20, true, true);
-    private final Image imageHex = new Image("/images/icon-file-hex.png", 20, 20, true, true);
-    private final Image imageCode = new Image("/images/icon-code.png", 20, 20, true, true);
-    private final Image imageCss = new Image("/images/icon-file-css.png", 20, 20, true, true);
-    private final Image imageJava = new Image("/images/icon-code-java.png", 20, 20, true, true);
-    private final Image imageFolderBurn = new Image("/images/document.png", 20, 20, true, true);
+    private final Image imageFolder = new Image("/images/icon-folder.png", 30, 30, true, true);
+    private final Image imageFile = new Image("/images/icon-file-document.png", 30, 30, true, true);
+    private final Image imageArchive = new Image("/images/icon-archive.png", 30, 30, true, true);
+    private final Image imageBinary = new Image("/images/icon-file-binary.png", 30, 30, true, true);
+    private final Image imageHex = new Image("/images/icon-file-hex.png", 30, 30, true, true);
+    private final Image imageCode = new Image("/images/icon-code.png", 30, 30, true, true);
+    private final Image imageCss = new Image("/images/icon-file-css.png", 30, 30, true, true);
+    private final Image imageJava = new Image("/images/icon-code-java.png", 30, 30, true, true);
+    private final Image imageFolderBurn = new Image("/images/icon-folder-burn.png", 30, 30, true, true);
 
     public View(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -228,7 +228,20 @@ public class View extends BorderPane {
 
         if (files != null) {
             for (File file : files) {
-                ImageView icon = new ImageView(file.isDirectory() ? imageFolder : imageFile);
+                Image image;
+                if (file.isDirectory()){
+                    if (file.getName().equalsIgnoreCase("moncky2out")) image = imageFolderBurn;
+                    else image = imageFolder;
+                } else {
+                    if (file.getName().endsWith(".hex")) image = imageHex;
+                    else if (file.getName().endsWith(".bin")) image = imageBinary;
+                    else if (file.getName().endsWith(".java")) image = imageJava;
+                    else if (file.getName().endsWith(".css")) image = imageCss;
+                    else if (file.getName().endsWith(".mck2")) image = imageCode;
+                    else image = imageFile;
+                }
+
+                ImageView icon = new ImageView(image);
                 icon.setFitHeight(16);
                 icon.setFitWidth(16);
 
